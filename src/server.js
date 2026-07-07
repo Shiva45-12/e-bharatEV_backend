@@ -31,6 +31,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
 const stationRoutes = require('./routes/stationRoutes');
 const partnerRoutes = require('./routes/partnerRoutes');
 const franchiseRoutes = require('./routes/franchiseRoutes');
@@ -51,6 +52,7 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/vehicle', vehicleRoutes);
 app.use('/api/station', stationRoutes);
 app.use('/api/partner', partnerRoutes);
 app.use('/api/franchise', franchiseRoutes);

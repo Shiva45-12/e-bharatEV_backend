@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Vehicle = require('../models/Vehicle');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
@@ -120,9 +121,10 @@ const getAllUsers = async (req, res) => {
 // @access  Private (Admin)
 const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).lean();
     if (user) {
-      res.json(user);
+      const vehicles = await Vehicle.find({ user: user._id });
+      res.json({ ...user, vehicles });
     } else {
       res.status(404).json({ message: 'User not found' });
     }
