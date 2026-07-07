@@ -6,6 +6,7 @@ const {
   loginUser,
   getAllUsers,
   getUserProfile,
+  getOwnProfile,
   updateUserProfile,
   deleteUser
 } = require('../controllers/userController');
@@ -16,8 +17,10 @@ router.post('/register', registerUser);
 router.post('/send-otp', sendOtp);
 router.post('/login', loginUser);
 
-// User protected route for editing own profile
-router.put('/profile', protectUser, upload.single('profileImage'), updateUserProfile);
+// User protected route for fetching and editing own profile
+router.route('/profile')
+  .get(protectUser, getOwnProfile)
+  .put(protectUser, upload.single('profileImage'), updateUserProfile);
 
 // Admin protected routes
 router.route('/')
