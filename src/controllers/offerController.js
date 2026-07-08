@@ -1,8 +1,8 @@
 const Offer = require('../models/Offer');
 
-// @desc    Get all active offers
+// @desc    Get all active offers (Public/User)
 // @route   GET /api/offers
-// @access  Private
+// @access  Public
 const getOffers = async (req, res) => {
   try {
     let offers = await Offer.find({ isActive: true, validUntil: { $gte: new Date() } }).sort({ createdAt: -1 });
@@ -24,6 +24,18 @@ const getOffers = async (req, res) => {
       success: true,
       data: offers
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Get all offers (Admin)
+// @route   GET /api/offers/admin
+// @access  Private/Admin
+const getAdminOffers = async (req, res) => {
+  try {
+    const offers = await Offer.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: offers });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
@@ -84,6 +96,7 @@ const deleteOffer = async (req, res) => {
 
 module.exports = {
   getOffers,
+  getAdminOffers,
   createOffer,
   updateOffer,
   deleteOffer
