@@ -29,6 +29,62 @@ const getOffers = async (req, res) => {
   }
 };
 
+// @desc    Create a new offer
+// @route   POST /api/offers
+// @access  Private/Admin
+const createOffer = async (req, res) => {
+  try {
+    const { title, description, code, discountType, discountValue, validUntil, isActive } = req.body;
+
+    const offer = await Offer.create({
+      title,
+      description,
+      code,
+      discountType,
+      discountValue,
+      validUntil,
+      isActive: isActive !== undefined ? isActive : true
+    });
+
+    res.status(201).json({ success: true, data: offer });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Update an offer
+// @route   PUT /api/offers/:id
+// @access  Private/Admin
+const updateOffer = async (req, res) => {
+  try {
+    const offer = await Offer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!offer) {
+      return res.status(404).json({ success: false, message: 'Offer not found' });
+    }
+    res.json({ success: true, data: offer });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Delete an offer
+// @route   DELETE /api/offers/:id
+// @access  Private/Admin
+const deleteOffer = async (req, res) => {
+  try {
+    const offer = await Offer.findByIdAndDelete(req.params.id);
+    if (!offer) {
+      return res.status(404).json({ success: false, message: 'Offer not found' });
+    }
+    res.json({ success: true, message: 'Offer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
-  getOffers
+  getOffers,
+  createOffer,
+  updateOffer,
+  deleteOffer
 };
