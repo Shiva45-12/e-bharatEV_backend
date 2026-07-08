@@ -65,16 +65,17 @@ const getHeatmapData = async (req, res) => {
         id: station._id,
         name: station.name,
         pos: [lat, lng],
-        intensity: intensity
+        intensity: intensity,
+        city: station.city
       };
     });
 
     // Dummy fallback if no stations are in DB
     if (mapLocations.length === 0) {
         mapLocations.push(
-            { id: '1', pos: [28.6139, 77.2090], name: 'Delhi NCR Hub', intensity: 'high' },
-            { id: '2', pos: [19.0760, 72.8777], name: 'Mumbai Express', intensity: 'high' },
-            { id: '3', pos: [12.9716, 77.5946], name: 'Bengaluru Tech', intensity: 'medium' }
+            { id: '1', pos: [28.6139, 77.2090], name: 'Delhi NCR Hub', intensity: 'high', city: 'Delhi' },
+            { id: '2', pos: [19.0760, 72.8777], name: 'Mumbai Express', intensity: 'high', city: 'Mumbai' },
+            { id: '3', pos: [12.9716, 77.5946], name: 'Bengaluru Tech', intensity: 'medium', city: 'Bengaluru' }
         );
     }
 
