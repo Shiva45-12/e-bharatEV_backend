@@ -50,6 +50,7 @@ const auditRoutes = require('./routes/auditRoutes');
 const securityRoutes = require('./routes/securityRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const walletRoutes = require('./routes/walletRoutes');
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/vehicle', vehicleRoutes);
@@ -71,6 +72,7 @@ app.use('/api/audit', auditRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/wallet', walletRoutes);
 // Basic Route
 app.get('/', (req, res) => {
   res.send('API is running...');

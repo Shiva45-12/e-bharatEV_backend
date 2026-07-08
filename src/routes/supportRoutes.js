@@ -6,7 +6,8 @@ const {
   updateArticle, 
   deleteArticle,
   getSettings,
-  updateSettings
+  updateSettings,
+  chatWithSupport
 } = require('../controllers/supportController');
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -23,5 +24,8 @@ router.route('/articles/:id')
 router.route('/settings')
   .get(getSettings)
   .put(protect, updateSettings);
+
+// AI Chat
+router.post('/chat', chatWithSupport);
 
 module.exports = router;

@@ -1,5 +1,13 @@
 const Article = require('../models/Article');
 const SupportSettings = require('../models/SupportSettings');
+const OpenAI = require('openai');
+
+let openai;
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 // --- ARTICLES ---
 
@@ -119,11 +127,56 @@ const updateSettings = async (req, res) => {
   }
 };
 
+// @desc    Chat with AI Support
+// @route   POST /api/support/chat
+// @access  Public
+const chatWithSupport = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ success: false, message: 'Message is required' });
+    }
+
+    if (!openai) {
+      return res.status(200).json({
+        success: true,
+        reply: "Sorry, the AI support is currently offline (Missing API Key). Please try again later or call our helpline."
+      });
+    }
+
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: 'system', content: 'You are a helpful customer support assistant for Bharat EV Prime, an electric vehicle charging station network in India. Provide short, concise, and helpful answers in Hindi and English (Hinglish).' },
+        { role: 'user', content: message }
+      ],
+      model: 'gpt-3.5-turbo',
+      max_tokens: 150,
+    });
+
+    const reply = completion.choices[0].message.content;
+
+    res.status(200).json({
+      success: true,
+      reply: reply
+    });
+
+  } catch (error) {
+    console.error('OpenAI Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process chat request.',
+      reply: "I am having trouble connecting right now. Please try again later."
+    });
+  }
+};
+
 module.exports = {
   getArticles,
   addArticle,
   updateArticle,
   deleteArticle,
   getSettings,
-  updateSettings
+  updateSettings,
+  chatWithSupport
 };

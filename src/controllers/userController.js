@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Vehicle = require('../models/Vehicle');
+const Wallet = require('../models/Wallet');
+const Transaction = require('../models/Transaction');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
@@ -124,7 +126,12 @@ const getUserProfile = async (req, res) => {
     const user = await User.findById(req.params.id).lean();
     if (user) {
       const vehicles = await Vehicle.find({ user: user._id });
-      res.json({ ...user, vehicles });
+      let wallet = await Wallet.findOne({ user: user._id });
+      let transactions = [];
+      if (wallet) {
+        transactions = await Transaction.find({ wallet: wallet._id }).sort({ createdAt: -1 });
+      }
+      res.json({ ...user, vehicles, wallet, transactions });
     } else {
       res.status(404).json({ message: 'User not found' });
     }
