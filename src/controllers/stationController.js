@@ -138,6 +138,24 @@ const searchStations = async (req, res) => {
   }
 };
 
+// @desc    Delete a station
+// @route   DELETE /api/station/:id
+// @access  Private (Admin)
+const deleteStation = async (req, res) => {
+  try {
+    const station = await Station.findById(req.params.id);
+
+    if (station) {
+      await Station.deleteOne({ _id: station._id });
+      res.json({ message: 'Station removed successfully' });
+    } else {
+      res.status(404).json({ message: 'Station not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStation,
   getAllStations,
