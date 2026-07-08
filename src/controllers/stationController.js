@@ -11,7 +11,7 @@ const createStation = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields (name, location, city, connectors, partner)' });
     }
 
-    const station = await Station.create({
+    const stationData = {
       name,
       location,
       city,
@@ -22,7 +22,13 @@ const createStation = async (req, res) => {
       connectors,
       partner,
       status: status || 'Active'
-    });
+    };
+
+    if (req.file) {
+      stationData.image = `/uploads/${req.file.filename}`;
+    }
+
+    const station = await Station.create(stationData);
 
     res.status(201).json(station);
   } catch (error) {
@@ -76,6 +82,10 @@ const updateStation = async (req, res) => {
       station.connectors = req.body.connectors || station.connectors;
       station.partner = req.body.partner || station.partner;
       station.status = req.body.status || station.status;
+
+      if (req.file) {
+        station.image = `/uploads/${req.file.filename}`;
+      }
 
       const updatedStation = await station.save();
       res.json(updatedStation);

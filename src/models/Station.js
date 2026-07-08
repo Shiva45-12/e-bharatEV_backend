@@ -38,6 +38,9 @@ const stationSchema = new mongoose.Schema({
     type: String,
     enum: ['Active', 'Maintenance', 'Offline'],
     default: 'Active'
+  },
+  image: {
+    type: String,
   }
 }, {
   timestamps: true

@@ -8,14 +8,15 @@ const {
   deleteStation
 } = require('../controllers/stationController');
 const { protect } = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
 
 router.route('/')
-  .post(protect, createStation)
+  .post(protect, upload.single('image'), createStation)
   .get(getAllStations);
 
 router.route('/:id')
   .get(protect, getStationById)
-  .put(protect, updateStation)
+  .put(protect, upload.single('image'), updateStation)
   .delete(protect, deleteStation);
 
 module.exports = router;
