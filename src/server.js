@@ -51,6 +51,10 @@ const securityRoutes = require('./routes/securityRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const walletRoutes = require('./routes/walletRoutes');
+const rewardRoutes = require('./routes/rewardRoutes');
+const offerRoutes = require('./routes/offerRoutes');
+const emergencyRoutes = require('./routes/emergencyRoutes');
+const referralRoutes = require('./routes/referralRoutes');
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/vehicle', vehicleRoutes);
@@ -73,6 +77,10 @@ app.use('/api/security', securityRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/wallet', walletRoutes);
+app.use('/api/rewards', rewardRoutes);
+app.use('/api/offers', offerRoutes);
+app.use('/api/emergency', emergencyRoutes);
+app.use('/api/referral', referralRoutes);
 // Basic Route
 app.get('/', (req, res) => {
   res.send('API is running...');

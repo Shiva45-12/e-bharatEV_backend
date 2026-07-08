@@ -15,6 +15,25 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
+    default: ''
+  },
+  rewardPoints: {
+    type: Number,
+    default: 0
+  },
+  tier: {
+    type: String,
+    enum: ['Bronze', 'Silver', 'Gold', 'Platinum'],
+    default: 'Silver'
+  },
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   status: {
     type: String,
