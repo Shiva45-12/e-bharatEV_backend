@@ -1,13 +1,5 @@
 const Article = require('../models/Article');
 const SupportSettings = require('../models/SupportSettings');
-const OpenAI = require('openai');
-
-let openai;
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-}
 
 // --- ARTICLES ---
 
@@ -127,7 +119,7 @@ const updateSettings = async (req, res) => {
   }
 };
 
-// @desc    Chat with AI Support
+// @desc    Chat with AI Support (Google Gemini)
 // @route   POST /api/support/chat
 // @access  Public
 const chatWithSupport = async (req, res) => {
@@ -138,31 +130,60 @@ const chatWithSupport = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Message is required' });
     }
 
-    if (!openai) {
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
       return res.status(200).json({
         success: true,
-        reply: "Sorry, the AI support is currently offline (Missing API Key). Please try again later or call our helpline."
+        reply: "Sorry, the AI support is currently offline (Missing API Key). Please call our helpline."
       });
     }
 
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: 'You are a helpful customer support assistant for Bharat EV Prime, an electric vehicle charging station network in India. Provide short, concise, and helpful answers in Hindi and English (Hinglish).' },
-        { role: 'user', content: message }
-      ],
-      model: 'gpt-3.5-turbo',
-      max_tokens: 150,
+    const systemPrompt = `You are a helpful customer support assistant for Bharat EV Prime, an electric vehicle charging station network in India. 
+Your job is to help users with EV charging queries, app usage, wallet issues, booking issues, and general EV-related questions.
+Provide short, friendly, and helpful answers. You can respond in Hindi, English, or Hinglish based on user preference.
+Keep replies under 100 words.`;
+
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(geminiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: systemPrompt + '\n\nUser: ' + message }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 200
+        }
+      })
     });
 
-    const reply = completion.choices[0].message.content;
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Gemini API Error:', data);
+      return res.status(500).json({
+        success: false,
+        reply: "I am having trouble connecting right now. Please try again later."
+      });
+    }
+
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 
+                  "Sorry, I couldn't generate a response. Please try again.";
 
     res.status(200).json({
       success: true,
-      reply: reply
+      reply: reply.trim()
     });
 
   } catch (error) {
-    console.error('OpenAI Error:', error);
+    console.error('Gemini Chat Error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to process chat request.',
