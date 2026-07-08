@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { raiseSOS } = require('../controllers/emergencyController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protectUser } = require('../middlewares/authMiddleware');
 
-router.post('/sos', protect, raiseSOS);
+router.post('/sos', protectUser, raiseSOS);
 
 module.exports = router;

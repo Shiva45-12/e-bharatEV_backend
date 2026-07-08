@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { getOffers } = require('../controllers/offerController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protectUser } = require('../middlewares/authMiddleware');
 
-router.get('/', protect, getOffers);
+router.get('/', protectUser, getOffers);
 
 module.exports = router;

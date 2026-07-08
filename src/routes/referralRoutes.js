@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { getReferralStats } = require('../controllers/referralController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protectUser } = require('../middlewares/authMiddleware');
 
-router.get('/stats', protect, getReferralStats);
+router.get('/stats', protectUser, getReferralStats);
 
 module.exports = router;
