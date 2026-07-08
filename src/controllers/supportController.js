@@ -144,7 +144,7 @@ Your job is to help users with EV charging queries, app usage, wallet issues, bo
 Provide short, friendly, and helpful answers. You can respond in Hindi, English, or Hinglish based on user preference.
 Keep replies under 100 words.`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
       method: 'POST',
