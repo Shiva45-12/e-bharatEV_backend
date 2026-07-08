@@ -97,21 +97,44 @@ const updateStation = async (req, res) => {
   }
 };
 
-// @desc    Delete a station
-// @route   DELETE /api/station/:id
-// @access  Private (Admin)
-const deleteStation = async (req, res) => {
+// @desc    Search stations by city / name (public)
+// @route   GET /api/station/search
+// @access  Public
+const searchStations = async (req, res) => {
   try {
-    const station = await Station.findById(req.params.id);
+    const { q, city, status } = req.query;
 
-    if (station) {
-      await Station.deleteOne({ _id: station._id });
-      res.json({ message: 'Station removed successfully' });
-    } else {
-      res.status(404).json({ message: 'Station not found' });
+    const filter = {};
+
+    if (q) {
+      filter.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { location: { $regex: q, $options: 'i' } },
+        { address: { $regex: q, $options: 'i' } },
+        { city: { $regex: q, $options: 'i' } },
+        { partner: { $regex: q, $options: 'i' } }
+      ];
     }
+
+    if (city) {
+      filter.city = { $regex: city, $options: 'i' };
+    }
+
+    if (status) {
+      filter.status = status;
+    } else {
+      filter.status = 'Active'; // Default: only active stations
+    }
+
+    const stations = await Station.find(filter).sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: stations.length,
+      data: stations
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -120,5 +143,6 @@ module.exports = {
   getAllStations,
   getStationById,
   updateStation,
-  deleteStation
+  deleteStation,
+  searchStations
 };
