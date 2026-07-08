@@ -11,7 +11,7 @@ const { protect } = require('../middlewares/authMiddleware');
 
 router.route('/')
   .post(protect, createStation)
-  .get(protect, getAllStations);
+  .get(getAllStations);
 
 router.route('/:id')
   .get(protect, getStationById)
