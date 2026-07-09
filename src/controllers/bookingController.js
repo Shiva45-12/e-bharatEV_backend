@@ -4,7 +4,7 @@ const Booking = require('../models/Booking');
 const Station = require('../models/Station');
 const Wallet = require('../models/Wallet');
 
-const razorpay = new Razorpay({
+const getRazorpay = () => new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
@@ -20,7 +20,7 @@ const createOrder = async (req, res) => {
     const { amount } = req.body;
     if (!amount || amount <= 0) return res.status(400).json({ success: false, message: 'Invalid amount' });
 
-    const order = await razorpay.orders.create({
+    const order = await getRazorpay().orders.create({
       amount: Math.round(amount * 100), // paise
       currency: 'INR',
       receipt: `rcpt_${Date.now()}`,
