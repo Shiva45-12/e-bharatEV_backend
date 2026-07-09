@@ -5,7 +5,7 @@ const Vehicle = require('../models/Vehicle');
 // @access  Private (User)
 exports.registerVehicle = async (req, res) => {
   try {
-    const { brand, model, registrationNumber, connectorType } = req.body;
+    const { brand, model, registrationNumber, connectorType, batteryCapacity } = req.body;
 
     if (!brand || !model || !registrationNumber || !connectorType) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
@@ -16,7 +16,8 @@ exports.registerVehicle = async (req, res) => {
       brand,
       model,
       registrationNumber,
-      connectorType
+      connectorType,
+      ...(batteryCapacity && { batteryCapacity: Number(batteryCapacity) }),
     });
 
     res.status(201).json({

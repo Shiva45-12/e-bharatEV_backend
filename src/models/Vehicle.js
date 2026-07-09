@@ -21,7 +21,10 @@ const vehicleSchema = new mongoose.Schema({
   connectorType: {
     type: String,
     required: true,
-  }
+  },
+  batteryCapacity: {
+    type: Number, // in kWh
+  },
 }, {
   timestamps: true
 });
