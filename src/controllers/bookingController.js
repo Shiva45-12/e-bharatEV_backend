@@ -78,7 +78,7 @@ const createBooking = async (req, res) => {
 
     const pin = generatePin();
 
-    const booking = await Booking.create({
+    const newBooking = new Booking({
       user: req.user._id,
       station: stationId,
       connectorType,
@@ -92,14 +92,20 @@ const createBooking = async (req, res) => {
       pricePerUnit: pricePerUnit || 18,
       paymentMethod,
       paymentStatus: 'Paid',
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
+      razorpayOrderId: razorpayOrderId || '',
+      razorpayPaymentId: razorpayPaymentId || '',
+      razorpaySignature: razorpaySignature || '',
       status: 'Confirmed',
       pin,
     });
 
-    const populated = await Booking.findById(booking._id).populate('station', 'name location city image powerCapacity');
+    // Generate bookingId before save
+    const count = await Booking.countDocuments();
+    newBooking.bookingId = `BK${Date.now().toString().slice(-6)}${count + 1}`;
+
+    await newBooking.save();
+
+    const populated = await Booking.findById(newBooking._id).populate('station', 'name location city image powerCapacity');
 
     res.status(201).json({ success: true, data: populated });
   } catch (err) {
