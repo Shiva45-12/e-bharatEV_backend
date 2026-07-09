@@ -53,12 +53,11 @@ const bookingSchema = new mongoose.Schema({
   pin: { type: String },
 }, { timestamps: true });
 
-bookingSchema.pre('save', async function (next) {
+bookingSchema.pre('save', async function () {
   if (!this.bookingId) {
     const count = await mongoose.model('Booking').countDocuments();
     this.bookingId = `BK${Date.now().toString().slice(-6)}${count + 1}`;
   }
-  next();
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
